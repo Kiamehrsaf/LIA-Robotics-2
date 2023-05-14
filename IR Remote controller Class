@@ -1,1 +1,189 @@
+The objective of this code is to enable the ///Movement of the car through the use of an IR remote.
+/////The car can be operated by pressing specific buttons that are recognized by the program,
+////and classes are utilized to facilitate its movement.
+main code 
 
+#include "IRremote.h"
+#include "motor_functions.h"
+
+
+int receiver = 9;
+
+IRrecv irrecv(receiver);
+decode_results results;
+
+
+Mymotors Car1(1);
+
+void setup(){
+  // Initialize the IR receiver
+  irrecv.enableIRIn();
+  Car1.initServo();
+  Serial.begin(9600);
+}
+
+void loop() {
+  // If an IR signal is received
+  if (irrecv.decode(&results)) {
+    Serial.println(results.value,HEX);
+    switch(results.value) {
+      case 0xFF629D: // UP button pressed
+        Car1.forward();
+        delay(2000); 
+        break;
+
+      case 0xFFA857: // DOWN button pressed
+        Car1.back();         
+        delay(2000); 
+        break;
+ 
+      case 0xFF22DD: // left button pressed
+        Car1.left();         
+        delay(500); 
+        break;  
+ 
+      case 0xFFC23D: // right button pressed
+        Car1.right();         
+        delay(500); 
+        break; 
+ 
+      case 0xFF02FD: // ok button pressed
+        Car1.shoot();         
+        delay(2000); 
+        break;
+ 
+      case 0xFF6897: // 1 button pressed
+        Car1.forward1();         
+        delay(2000); 
+        break;  
+
+      case 0xFF9867: // 2 button pressed
+        Car1.stop();         
+        delay(2000); 
+        break;        
+    }
+    // Resume the IR receiver
+    irrecv.resume(); 
+  }
+}
+
+
+
+header file 
+
+#ifndef MOTOR_FUNCTIONS_H
+#define MOTOR_FUNCTIONS_H
+
+#include <Arduino.h>
+#include <Servo.h>
+
+// Motor pin definitions
+
+class Mymotors {
+    private:
+#define AIN1 8
+#define PWMA 5
+#define BIN1 7
+#define PWMB 6
+#define STB  3
+Servo myservo;
+
+    
+public:
+
+
+void forward();
+void forward1();
+void left();
+void back();
+void back2();
+void right();
+void shoot();
+void stop();
+void initServo();
+
+  Mymotors(){};
+  Mymotors(int x);
+  //Constructor
+
+  
+  
+  };
+
+#endif
+
+
+cpp file 
+
+#include "motor_functions.h"
+
+Mymotors::Mymotors(int x){
+ 
+  };
+void Mymotors::initServo(){
+   myservo.attach(10);
+  myservo.write(90);// move servos to center position -> 90
+  }
+  
+void Mymotors::forward(){  
+  digitalWrite(AIN1, HIGH);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, HIGH);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Mymotors::forward1(){  
+  digitalWrite(AIN1, HIGH);
+  analogWrite(PWMA, 150);
+  digitalWrite(BIN1, HIGH);
+  analogWrite(PWMB, 150);
+  digitalWrite(STB, HIGH);
+}
+
+void Mymotors::left(){
+  digitalWrite(AIN1, LOW);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, HIGH);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Mymotors::back(){
+  digitalWrite(AIN1, LOW);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, LOW);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Mymotors::back2(){
+  digitalWrite(AIN1, LOW);
+  analogWrite(PWMA, 150);
+  digitalWrite(BIN1, LOW);
+  analogWrite(PWMB, 150);
+  digitalWrite(STB, HIGH);
+}
+
+void Mymotors::right(){
+  digitalWrite(AIN1, HIGH);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, LOW);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Mymotors::stop(){
+  digitalWrite(AIN1, LOW);
+  analogWrite(PWMA, 0);
+  digitalWrite(BIN1, LOW);
+  analogWrite(PWMB, 0);
+  digitalWrite(STB, LOW);
+}
+
+void Mymotors::shoot(){
+  myservo.write(180);// move servos to center position -> 120°
+  delay(500);
+   myservo.write(110);// move servos to center position -> 120°
+  delay(500);
+  }

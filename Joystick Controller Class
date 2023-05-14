@@ -1,1 +1,138 @@
+//////The primary goal of this project is to control the robot car using a joystick,
+//////achieved through the implementation of classes and conditional statements (if/else-if).
+
+Main code
+#include "Controller.h"
+
+
+int JPin1 = A1;
+int JPin2 = A2;
+
+
+
+Mycontrol Car1(1);
+
+void setup(){
+
+}
+
+void loop() {
+ if (analogRead(JPin1)<512){
+    Car1.forward();
+  }
+  if(analogRead(JPin1)>=512){
+    Car1.back();
+    if (analogRead(JPin2)<512){
+      Car1.right();
+    }
+    if(analogRead(JPin2)>=512){
+      Car1.left();
+    }
+  }
+  if ((analogRead(JPin1) >= 512) && (analogRead(JPin2) >= 512)){
+    Car1.stop();
+  }
+}
+
+header
+
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
+#include <Arduino.h>
+
+
+// Motor pin definitions
+
+class Mycontrol {
+    private:
+#define AIN1 8
+#define PWMA 5
+#define BIN1 7
+#define PWMB 6
+#define STB  3
+
+
+    
+public:
+
+
+void forward();
+void forward1();
+void left();
+void back();
+void back2();
+void right();
+void shoot();
+void stop();
+void initServo();
+
+  Mycontrol(){};
+  Mycontrol(int x);
+  //Constructor
+
+  
+  
+  };
+
+#endif
+
+
+cpp
+
+#include "Controller.h"
+
+Mycontrol::Mycontrol(int x){
+ 
+  };
+  
+void Mycontrol::forward(){  
+  digitalWrite(AIN1, HIGH);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, HIGH);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Mycontrol::forward1(){  
+  digitalWrite(AIN1, HIGH);
+  analogWrite(PWMA, 150);
+  digitalWrite(BIN1, HIGH);
+  analogWrite(PWMB, 150);
+  digitalWrite(STB, HIGH);
+}
+
+void Mycontrol::left(){
+  digitalWrite(AIN1, LOW);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, HIGH);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Mycontrol::back(){
+  digitalWrite(AIN1, LOW);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, LOW);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+
+
+void Mycontrol::right(){
+  digitalWrite(AIN1, HIGH);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, LOW);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Mycontrol::stop(){
+  digitalWrite(AIN1, LOW);
+  analogWrite(PWMA, 0);
+  digitalWrite(BIN1, LOW);
+  analogWrite(PWMB, 0);
+  digitalWrite(STB, LOW);
+}
 

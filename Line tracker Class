@@ -1,1 +1,138 @@
+/////The goal of this project is to control the movement of a robot car using three line tracker sensors, which is achieved by implementing multiple if/else-if/else functions.
+/////Utilizing classes makes the program more efficient and easier to manage, resulting in a more effective solution.
+ 
+ main code 
+ #include "Linereader.h" //// Include the Robot class header file
 
+Linereader linereader; 
+
+void setup() {
+linereader.setup(); //// Using the setup function of the Robot class to initialize the pins
+}
+
+void loop() {
+linereader.run(); //// Using the run function of the Robot class to control the robot's movement
+}
+
+header file 
+
+#ifndef LINEREADER_H
+#define LINEREADER_H
+
+#include <Arduino.h>
+
+class Linereader {//// Define a class called Linereader
+public:
+  Linereader();//// Constructor of the class Linereader
+  void setup(); //// Member function to initialize the pins
+  void run(); //// Member function to control the robot's movement
+private:
+int AIN1; //// Declare a private variable AIN1
+int PWMA; //// Declare a private variable PWMA
+int BIN1; //// Declare a private variable BIN1
+int PWMB; //// Declare a private variable PWMB
+int STB; //// Declare a private variable STB
+int LT_R; //// Declare a private variable LT_R
+int LT_M; //// Declare a private variable LT_M
+int LT_L; //// Declare a private variable LT_L
+void forward(); //// Member function to move the robot forward
+void left(); //// Member function to move the robot left
+void back(); //// Member function to move the robot backward
+void right(); //// Member function to move the robot right
+void stop(); //// Member function to stop the robot
+};
+
+#endif
+
+
+
+cpp file 
+
+#include "Linereader.h"
+
+Linereader::Linereader() ://///These lines define the constructor for the class "Robot". 
+  AIN1(8),
+  PWMA(5),
+  BIN1(7),
+  PWMB(6),
+  STB(3),
+  LT_R(A0),
+  LT_M(A1),
+  LT_L(A2)
+{}
+
+void Linereader::setup() {/////The setup function sets the mode of the pins as input or output.
+  //// The pins AIN1, PWMA, BIN1, PWMB, and STB are set as output pins.
+  /// The pins LT_R, LT_M, and LT_L are set as input pins.
+  pinMode(AIN1, OUTPUT);
+  pinMode(PWMA, OUTPUT);
+  pinMode(BIN1, OUTPUT);
+  pinMode(PWMB, OUTPUT);
+  pinMode(STB, OUTPUT);
+  pinMode(LT_R, INPUT);
+  pinMode(LT_M, INPUT);
+  pinMode(LT_L, INPUT);
+}
+
+void Linereader::run() {//////The run function determines the action to be taken based on the readings. 
+  ////If the reading from LT_M is greater than 260, the robot moves forward.////// If the reading from LT_R is greater than 350
+  ///, the robot turns right until the reading drops below 350.
+  //// If the reading from LT_L is greater than 250, the robot turns left until the reading drops below 250.
+  ///If the reading from LT_M is less than 50, the robot turns right until the reading increases to 50.
+  if (analogRead(LT_M) > 260) {
+    forward();
+  } else if (analogRead(LT_R) > 350) {
+    right();
+    while (analogRead(LT_R) > 350);
+  } else if (analogRead(LT_L) > 250) {
+    left();
+    while (analogRead(LT_L) > 250);
+  } else if (analogRead(LT_M) < 50) {
+    right();
+    while (analogRead(LT_M) < 50);
+  }
+}
+
+void Linereader::forward() {/////The forwrd function makes the robot move forward by setting the pins AIN1 and/
+  /// BIN1 to HIGH and using analogWrite to control the speed of the motors.
+  digitalWrite(AIN1, HIGH);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, HIGH);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Linereader::left() {////The left function makes the robot turn left by setting the pins AIN1 a to LOW and BIN1 HIGH.
+  digitalWrite(AIN1, LOW);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, HIGH);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Linereader::back() {/////The back function makes the robot move back by setting the pins AIN1 and/
+  /// BIN1 to LOW and using analogWrite to control the speed of the motors.
+  digitalWrite(AIN1, LOW);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, LOW);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Linereader::right() {////The right function makes the robot turn right by setting the pins AIN1 a to HIGH and BIN1 LOW.
+  digitalWrite(AIN1, HIGH);
+  analogWrite(PWMA, 50);
+  digitalWrite(BIN1, LOW);
+  analogWrite(PWMB, 50);
+  digitalWrite(STB, HIGH);
+}
+
+void Linereader::stop() {{/////The stop function stops the robot from  moving  by setting the STB to LOW and
+  //// using 0 for analogWrite to control the speed of the motors.
+}
+  digitalWrite(AIN1, LOW);
+  analogWrite(PWMA, 0);
+  digitalWrite(BIN1, LOW);
+  analogWrite(PWMB, 0);
+  digitalWrite(STB, LOW);
+}
